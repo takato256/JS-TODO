@@ -1,5 +1,5 @@
 function fetchUserInfo(userId){
-    fetch(`https://apt.github.com/users/${encodeURIComponent(userId)}`)
+    fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
             console.log(response.status);
             // エラーレスポンスが返されたことを検知する
