@@ -1,3 +1,7 @@
+function main(){
+    fetchUserInfo("takato256");
+}
+
 function fetchUserInfo(userId){
     fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
@@ -7,24 +11,27 @@ function fetchUserInfo(userId){
             } else {
                 return response.json().then(userInfo => {
                     // HTMLの組み立て
-                    const view = escapeHTML`
-                    <h4>${userInfo.name} (@${userInfo.login})</h4>
-                    <img src="${userInfo.avatar_url}" alt="${userInfo.login}" height="100">
-                    <dl>
-                        <dt>Location</dt>
-                        <dd>${userInfo.location}</dd>
-                        <dt>Reposotories</dt>
-                        <dd>${userInfo.public_repos}</dd>
-                    </dl>
-                    `;
+                    const view = createView(userInfo);
                     // HTMLの挿入
-                    const result = document.getElementById("result");
-                    result.innerHTML = view;
+                    displayView(view);
                 });
             }
         }).catch(error => {
             console.error(error);
         });
+}
+
+function createView(userInfo){
+    return escapeHTML`
+    <h4>${userInfo.name} (@${userInfo.login})</h4>
+    <img src="${userInfo.avatar_url}" alt="${userInfo.login}" height="100">
+    <dl>
+        <dt>Location</dt>
+        <dd>${userInfo.location}</dd>
+        <dt>Reposotories</dt>
+        <dd>${userInfo.public_repos}</dd>
+    </dl>
+    `;
 }
 
 function escapeSpecialChars(str){
@@ -34,6 +41,11 @@ function escapeSpecialChars(str){
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function displayView(view){
+    const result = document.getElementById("result");
+    result.innerHTML = view;
 }
 
 function escapeHTML(strings, ...values){
