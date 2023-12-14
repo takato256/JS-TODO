@@ -1,14 +1,12 @@
-function main(){
-    fetchUserInfo("takato256")
-        // ここではJSONオブジェクトで解決されるPromise
-        .then((userInfo) => createView(userInfo))
-        // ここではHTML文字列で解決されるPromise
-        .then((view) => displayView(view))
-        // Promiseチェーンでエラーがあった場合はキャッチされる
-        .catch((error) => {
-            // Promiseチェーンの中で発生したエラーを受け取る
-            console.error(`エラーが発生しました(${error})`);
-        });
+async function main(){
+    try {
+        const userId = getUserId();
+        const userInfo = await fetchUserInfo(userId);
+        const view = createView(userInfo);
+        displayView(view);
+    } catch (error) {
+        console.error(`エラーが発生しました (${error})`);
+    }
 }
 
 function fetchUserInfo(userId){
@@ -22,6 +20,10 @@ function fetchUserInfo(userId){
                 return response.json();
             }
         });
+}
+
+function getUserId() {
+    return document.getElementById("userId").value;
 }
 
 function createView(userInfo){
