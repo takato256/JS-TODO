@@ -1,23 +1,26 @@
 function main(){
-    fetchUserInfo("takato256");
+    fetchUserInfo("takato256")
+        // ここではJSONオブジェクトで解決されるPromise
+        .then((userInfo) => createView(userInfo))
+        // ここではHTML文字列で解決されるPromise
+        .then((view) => displayView(view))
+        // Promiseチェーンでエラーがあった場合はキャッチされる
+        .catch((error) => {
+            // Promiseチェーンの中で発生したエラーを受け取る
+            console.error(`エラーが発生しました(${error})`);
+        });
 }
 
 function fetchUserInfo(userId){
-    fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
+    // fetchの返り値のPromiseをreturnする
+    return fetch(`https://api.github.com/users/${encodeURIComponent(userId)}`)
         .then(response => {
-            // エラーレスポンスが返されたことを検知する
             if (!response.ok) {
-                console.log("エラーレスポンス", response);
+                // エラーレスポンスからRejectedなPromiseを作成して返す
+                return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
             } else {
-                return response.json().then(userInfo => {
-                    // HTMLの組み立て
-                    const view = createView(userInfo);
-                    // HTMLの挿入
-                    displayView(view);
-                });
+                return response.json();
             }
-        }).catch(error => {
-            console.error(error);
         });
 }
 
